@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Advertisements;
 using UnityEngine.Serialization;
@@ -10,17 +11,21 @@ namespace Larje.Core.Services
     [BindService(typeof(IAdsService))]
     public class UnityAdsService : Service, IAdsService, IUnityAdsInitializationListener
     {
-        [Header("System")] 
+        [Header("System")]
+        [SerializeField, Min(0f)] private float delayBetweenAds = 20f;
         [SerializeField] private bool testMode = true;
         [SerializeField] private bool logsEnabled = true;
         [SerializeField] private bool enableAds = true;
+        
         [Header("Keys")] 
         [SerializeField] private Keys androidKeys;
         [SerializeField] private Keys iosKeys;
+        
         [Header("Banner")] 
         [SerializeField] private bool useBanner;
         [SerializeField] private BannerPosition bannerPosition = BannerPosition.BOTTOM_CENTER;
 
+        private bool _blockInterstitial;
         private Keys _keys;
 
         private UnityAdsUniversal _interstitial;
@@ -81,9 +86,17 @@ namespace Larje.Core.Services
 
         public void ShowInterstitial()
         {
+            if (_blockInterstitial)
+            {
+                return;
+            }
+            
             if (Initialized)
             {
                 _interstitial.ShowAd();
+
+                _blockInterstitial = true;
+                DOVirtual.DelayedCall(delayBetweenAds, () => _blockInterstitial = false, true);
             }
         }
 
