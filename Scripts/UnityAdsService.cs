@@ -84,7 +84,7 @@ namespace Larje.Core.Services
             Debug.Log($"Unity Ads Initialization Failed: {error.ToString()} - {message}");
         }
 
-        public void ShowInterstitial()
+        public void ShowInterstitial(int interIndex = 0)
         {
             if (_blockInterstitial)
             {
