@@ -109,6 +109,11 @@ namespace Larje.Core.Services
             }
         }
 
+        public bool ShowAppOpenAd()
+        {
+            return true;
+        }
+
         [Serializable]
         private class Keys
         {
