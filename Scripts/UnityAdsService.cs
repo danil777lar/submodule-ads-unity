@@ -27,6 +27,8 @@ namespace Larje.Core.Services
         [SerializeField] private bool useBanner;
         [SerializeField] private BannerPosition bannerPosition = BannerPosition.BOTTOM_CENTER;
 
+        [InjectService] private IDataService _dataService;
+
         private bool _blockInterstitial;
         private Keys _keys;
 
@@ -88,11 +90,11 @@ namespace Larje.Core.Services
 
         public void ShowInterstitial(int interIndex = 0)
         {
-            if (_blockInterstitial)
+            if (_blockInterstitial || _dataService.GameData.NoAdsActive)
             {
                 return;
             }
-            
+
             if (Initialized)
             {
                 _interstitial.ShowAd();
@@ -100,6 +102,12 @@ namespace Larje.Core.Services
                 _blockInterstitial = true;
                 DOVirtual.DelayedCall(delayBetweenAds, () => _blockInterstitial = false, true);
             }
+        }
+
+        public void SetActiveNoAdsMode(bool noAdsActive)
+        {
+            _dataService.GameData.NoAdsActive = noAdsActive;
+            _dataService.SaveGameData();
         }
 
         public void ShowRewarded(Action onAdShowStart, Action onAdShowClick, Action onAdShowComplete,
