@@ -44,6 +44,7 @@ namespace Larje.Core.Services
         
         public event Action EventBannerShown;
         public event Action EventBannerHidden;
+        public event Action<bool> EventNoAdsModeChanged;
 
         public override void Init()
         {
@@ -108,6 +109,7 @@ namespace Larje.Core.Services
         {
             _dataService.GameData.NoAdsActive = noAdsActive;
             _dataService.SaveGameData();
+            EventNoAdsModeChanged?.Invoke(noAdsActive);
         }
 
         public void ShowRewarded(Action onAdShowStart, Action onAdShowClick, Action onAdShowComplete,
